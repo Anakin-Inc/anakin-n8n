@@ -1,5 +1,6 @@
 import {
 	IAuthenticateGeneric,
+	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
@@ -34,6 +35,14 @@ export class AnakinScraperApi implements ICredentialType {
 			headers: {
 				'X-API-Key': '={{$credentials.apiKey}}',
 			},
+		},
+	};
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '={{$credentials.baseUrl}}',
+			url: '/v1/health',
+			method: 'GET',
 		},
 	};
 }
