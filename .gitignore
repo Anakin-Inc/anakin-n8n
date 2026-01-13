@@ -6,4 +6,5 @@ dist/
 !gulpfile.js
 .DS_Store
 npm-debug.log
+*.tgz
 
