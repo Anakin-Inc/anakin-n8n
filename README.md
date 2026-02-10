@@ -41,7 +41,7 @@ Then restart n8n.
 Before using the Anakin node, you need to set up your API credentials:
 
 1. In n8n, go to **Credentials** > **New**
-2. Search for **Anakin API**
+2. Search for **Anakin Scraper API**
 3. Fill in:
    - **API Key**: Your Anakin Scraper API authentication token
    - **Base URL**: The API endpoint (default: `https://api.anakin.io`)
@@ -52,8 +52,8 @@ Before using the Anakin node, you need to set up your API credentials:
 1. Add the **Anakin** node to your workflow
 2. Connect it to your trigger or previous node
 3. Select your credentials
-4. Enter the **URL** you want to scrape
-5. (Optional) Configure additional options
+4. Choose an operation: **Scrape URL**, **Search**, or **Agentic Search**
+5. Fill in the required fields and configure any additional options
 
 ## Usage
 
@@ -260,8 +260,8 @@ You can enable **Continue on Fail** in the node settings to handle errors gracef
 
 ```bash
 # Clone the repository
-git clone https://github.com/Anakin-Inc/blueprint-scribe-35.git
-cd blueprint-scribe-35/external-integrations/n8n
+git clone https://github.com/Anakin-Inc/anakin-n8n.git
+cd anakin-n8n
 
 # Install dependencies
 npm install
@@ -291,8 +291,8 @@ n8n-nodes-anakin-org/
 ## Support
 
 For issues, questions, or contributions:
-- 🐛 [Report a bug](https://github.com/Anakin-Inc/blueprint-scribe-35/issues)
-- 💡 [Request a feature](https://github.com/Anakin-Inc/blueprint-scribe-35/issues)
+- 🐛 [Report a bug](https://github.com/Anakin-Inc/anakin-n8n/issues)
+- 💡 [Request a feature](https://github.com/Anakin-Inc/anakin-n8n/issues)
 - 📖 [API Documentation](https://anakin.io/docs)
 
 ## License
@@ -300,6 +300,10 @@ For issues, questions, or contributions:
 MIT
 
 ## Changelog
+
+### 1.1.9
+- Fixed critical security issue: replaced `Function()` constructor with `sleep` from `n8n-workflow`
+- Fixed duplicate `jobId` extraction bug in Scrape URL operation
 
 ### 1.1.0
 - Added AI-powered Search operation (Perplexity integration)
