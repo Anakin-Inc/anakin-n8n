@@ -3,6 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	sleep,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -302,10 +303,7 @@ export class AnakinScraper implements INodeType {
 			
 			// Wait before checking status (except first attempt)
 			if (attempts > 1) {
-				await new Promise((resolve) => {
-					const timer = (this.constructor as any).prototype.constructor('return this')().setTimeout;
-					timer(resolve, pollInterval);
-				});
+				await sleep(pollInterval);
 			}
 
 			this.logger.info(`Checking status (attempt ${attempts}) for request ID: ${requestId}`);
@@ -489,10 +487,7 @@ export class AnakinScraper implements INodeType {
 			
 			// Wait before checking status (except first attempt)
 			if (attempts > 1) {
-				await new Promise((resolve) => {
-					const timer = (this.constructor as any).prototype.constructor('return this')().setTimeout;
-					timer(resolve, pollInterval);
-				});
+				await sleep(pollInterval);
 			}
 
 			this.logger.info(`Checking agentic search status (attempt ${attempts}) for job ID: ${jobId}`);
