@@ -301,6 +301,10 @@ MIT
 
 ## Changelog
 
+### 1.2.0
+- Removed all verbose logger lines per n8n community node review feedback
+- Cleaner execution without unnecessary console output
+
 ### 1.1.9
 - Fixed critical security issue: replaced `Function()` constructor with `sleep` from `n8n-workflow`
 - Fixed duplicate `jobId` extraction bug in Scrape URL operation
