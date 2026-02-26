@@ -259,8 +259,6 @@ export class AnakinScraper implements INodeType {
 		}
 
 		// Step 1: Submit the scraping job
-		this.logger.info(`Submitting scraping job for URL: ${url}`);
-		
 		const submitResponse = await this.helpers.httpRequestWithAuthentication.call(
 			this,
 			'anakinScraperApi',
@@ -292,8 +290,6 @@ export class AnakinScraper implements INodeType {
 			);
 		}
 
-		this.logger.info(`Job submitted successfully. Request ID: ${requestId}`);
-
 		// Step 2: Poll for completion
 		const startTime = Date.now();
 		let attempts = 0;
@@ -305,8 +301,6 @@ export class AnakinScraper implements INodeType {
 			if (attempts > 1) {
 				await sleep(pollInterval);
 			}
-
-			this.logger.info(`Checking status (attempt ${attempts}) for request ID: ${requestId}`);
 
 			// Check the status
 			const statusResponse = await this.helpers.httpRequestWithAuthentication.call(
@@ -323,13 +317,9 @@ export class AnakinScraper implements INodeType {
 			);
 
 			const status = (statusResponse as any).status;
-			
-			this.logger.info(`Current status: ${status}`);
 
 			// Check if job is completed
 			if (status === 'completed' || status === 'success') {
-				this.logger.info(`Job completed successfully for request ID: ${requestId}`);
-				
 				return {
 					json: {
 						success: true,
@@ -365,7 +355,6 @@ export class AnakinScraper implements INodeType {
 			}
 
 			// Job is still processing (status: 'pending', 'processing', 'queued', etc.)
-			this.logger.info(`Job still processing... (${status})`);
 		}
 
 		throw new NodeOperationError(
@@ -390,8 +379,6 @@ export class AnakinScraper implements INodeType {
 			);
 		}
 
-		this.logger.info(`Executing search: ${prompt}`);
-
 		// Call the search API (synchronous)
 		const searchResponse = await this.helpers.httpRequestWithAuthentication.call(
 			this,
@@ -410,8 +397,6 @@ export class AnakinScraper implements INodeType {
 				json: true,
 			},
 		);
-
-		this.logger.info(`Search completed successfully`);
 
 		return {
 			json: {
@@ -445,8 +430,6 @@ export class AnakinScraper implements INodeType {
 		}
 
 		// Step 1: Submit the agentic search job
-		this.logger.info(`Submitting agentic search job: ${prompt}`);
-		
 		const submitResponse = await this.helpers.httpRequestWithAuthentication.call(
 			this,
 			'anakinScraperApi',
@@ -476,8 +459,6 @@ export class AnakinScraper implements INodeType {
 			);
 		}
 
-		this.logger.info(`Agentic search job submitted successfully. Job ID: ${jobId}`);
-
 		// Step 2: Poll for completion
 		const startTime = Date.now();
 		let attempts = 0;
@@ -489,8 +470,6 @@ export class AnakinScraper implements INodeType {
 			if (attempts > 1) {
 				await sleep(pollInterval);
 			}
-
-			this.logger.info(`Checking agentic search status (attempt ${attempts}) for job ID: ${jobId}`);
 
 			// Check the status
 			const statusResponse = await this.helpers.httpRequestWithAuthentication.call(
@@ -507,13 +486,9 @@ export class AnakinScraper implements INodeType {
 			);
 
 			const status = (statusResponse as any).status;
-			
-			this.logger.info(`Current status: ${status}`);
 
 			// Check if job is completed
 			if (status === 'completed') {
-				this.logger.info(`Agentic search completed successfully for job ID: ${jobId}`);
-				
 				return {
 					json: {
 						success: true,
@@ -549,7 +524,6 @@ export class AnakinScraper implements INodeType {
 			}
 
 			// Job is still processing (status: 'pending', 'processing', etc.)
-			this.logger.info(`Agentic search still processing... (${status})`);
 		}
 
 		throw new NodeOperationError(
