@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-anakin-org",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "n8n node for Anakin API - web scraping, AI search, and intelligent data extraction",
   "keywords": [
     "n8n-community-node-package",
