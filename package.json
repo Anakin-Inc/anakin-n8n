@@ -50,6 +50,7 @@
     "eslint": "^8.0.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "gulp": "^5.0.1",
+    "jsonc-eslint-parser": "^3.2.0",
     "n8n-workflow": "*",
     "prettier": "^3.0.0",
     "typescript": "^5.3.0"

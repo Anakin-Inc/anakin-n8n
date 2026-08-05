@@ -4,6 +4,7 @@ dist/
 *.js.map
 *.d.ts
 !gulpfile.js
+!.eslintrc.js
 .DS_Store
 npm-debug.log
 *.tgz

@@ -8,7 +8,7 @@ import {
 export class AnakinScraperApi implements ICredentialType {
 	name = 'anakinScraperApi';
 	displayName = 'Anakin Scraper API';
-	documentationUrl = 'https://anakin.io';
+	documentationUrl = 'https://anakin.io/docs';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
