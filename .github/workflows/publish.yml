@@ -1,0 +1,67 @@
+# Publishes n8n-nodes-anakin-org to npm when a version tag (v1.4.1) is pushed.
+#
+# n8n only verifies community nodes published from GitHub Actions with an npm
+# provenance statement (required since 1 May 2026). Provenance lets anyone
+# verify the package was built by this workflow, from this repository and
+# commit. Adapted from n8n-io/n8n-nodes-starter's publish.yml.
+#
+# One-time setup, on npmjs.com (needs a package owner):
+#   n8n-nodes-anakin-org > Settings > Trusted Publisher > GitHub Actions
+#     Organization or user: Anakin-Inc
+#     Repository:           anakin-n8n
+#     Workflow filename:    publish.yml
+#     Environment:          (leave blank)
+# GitHub then proves this workflow's identity to npm, so no npm token is stored.
+#
+# Release:
+#   1. Bump "version" in package.json and merge to master.
+#   2. git tag v<version> && git push origin v<version>
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Mints the OIDC token used for Trusted Publishing and the provenance signature.
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted Publishing needs npm 11.5.1 or later.
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Check the tag matches package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "${GITHUB_REF_NAME#v}" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # prepublishOnly builds from a clean dist/ and runs the icon check first.
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
