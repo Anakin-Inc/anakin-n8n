@@ -541,6 +541,11 @@ MIT
 
 ## Changelog
 
+### 1.4.1
+- Fixed the node icon not appearing after install: 1.4.0 shipped a corrupted PNG. The node now uses SVG icons with separate light and dark mode variants
+- Added the same light and dark icons to the credential
+- Publishing now fails if any icon is missing, corrupted, or not a square SVG/PNG (`npm run check:icons`)
+
 ### 1.4.0
 - Added 18 new Operations covering the full Anakin API surface: Map, Crawl, Wire: Discover Actions, Wire: Browse Catalog, Wire: Run Read Action, Wire: Run Write Action, Wire: List Identities, Wire: Sign In, Wire: Request New Action, Create Monitor, List Monitors, Get Monitor Changes, Control Monitor, AI Visibility Search, AI Visibility Sources, List Sessions, Delete Session, and Browser Task
 - The node now exposes 21 of Anakin's 21 REST API capabilities (previously 3)

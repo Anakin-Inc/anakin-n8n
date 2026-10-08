@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-anakin-org",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "n8n node for Anakin API - web scraping, AI search, and intelligent data extraction",
   "keywords": [
     "n8n-community-node-package",
@@ -25,12 +25,14 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc && gulp build:icons",
+    "check:icons": "node scripts/check-icons.cjs",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run check:icons"
   },
   "files": [
     "dist"

@@ -62,7 +62,7 @@ export class AnakinScraper implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Anakin',
 		name: 'anakinScraper',
-		icon: 'file:anakin.svg',
+		icon: { light: 'file:anakin.svg', dark: 'file:anakin.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		description: 'Scrape websites, search with AI, and extract structured data',
