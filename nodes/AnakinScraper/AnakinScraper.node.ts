@@ -3,7 +3,10 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
 	sleep,
+	NodeApiError,
+	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -65,12 +68,14 @@ export class AnakinScraper implements INodeType {
 		icon: { light: 'file:anakin.svg', dark: 'file:anakin.dark.svg' },
 		group: ['transform'],
 		version: 1,
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Scrape websites, search with AI, and extract structured data',
 		defaults: {
 			name: 'Anakin',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		usableAsTool: true,
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'anakinScraperApi',
@@ -1352,7 +1357,14 @@ export class AnakinScraper implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				// HTTP failures arrive as NodeApiError and must keep their status and
+				// body for the n8n UI; anything else becomes a NodeOperationError. Both
+				// constructors return an existing error of their own class unchanged,
+				// so nothing already thrown by an operation is wrapped twice.
+				if (error instanceof NodeApiError) {
+					throw new NodeApiError(this.getNode(), error as unknown as JsonObject, { itemIndex: i });
+				}
+				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
 			}
 		}
 
