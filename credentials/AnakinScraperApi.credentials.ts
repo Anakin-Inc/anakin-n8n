@@ -8,6 +8,11 @@ import {
 export class AnakinScraperApi implements ICredentialType {
 	name = 'anakinScraperApi';
 	displayName = 'Anakin Scraper API';
+	// Reuses the node's icons; the build copies them to the same relative place in dist.
+	icon = {
+		light: 'file:../nodes/AnakinScraper/anakin.svg',
+		dark: 'file:../nodes/AnakinScraper/anakin.dark.svg',
+	} as const;
 	documentationUrl = 'https://anakin.io/docs';
 	properties: INodeProperties[] = [
 		{

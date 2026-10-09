@@ -30,6 +30,14 @@ module.exports = {
 			parser: '@typescript-eslint/parser',
 			plugins: ['eslint-plugin-n8n-nodes-base'],
 			extends: ['plugin:n8n-nodes-base/nodes'],
+			rules: {
+				// These predate NodeConnectionTypes and demand the string literal
+				// ['main']. n8n's current verification scanner
+				// (@n8n/eslint-plugin-community-nodes, node-connection-type-literal)
+				// requires the opposite: [NodeConnectionTypes.Main].
+				'n8n-nodes-base/node-class-description-inputs-wrong-regular-node': 'off',
+				'n8n-nodes-base/node-class-description-outputs-wrong': 'off',
+			},
 		},
 	],
 }
