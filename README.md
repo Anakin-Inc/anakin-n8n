@@ -58,12 +58,22 @@ Before using the Anakin node, you need to set up your API credentials:
 1. Add the **Anakin** node to your workflow
 2. Connect it to your trigger or previous node
 3. Select your credentials
-4. Choose an operation (see the full list below)
+4. Choose a resource and an operation (see the full list below)
 5. Fill in the required fields and configure any additional options
 
 ## Usage
 
-The Anakin node supports 21 operations covering the entire Anakin API: web scraping and AI search, site discovery (Map/Crawl), Wire automation actions, website monitoring, AI visibility comparison, browser session management, and AI-driven browser tasks.
+The Anakin node has 21 operations covering the entire Anakin API, grouped into five resources:
+
+| Resource | Operations |
+|----------|------------|
+| **Web** | Scrape URL, Search, Agentic Search, Map, Crawl |
+| **Wire** | Discover Actions, Browse Catalog, Run Read Action, Run Write Action, List Identities, Sign In, Request New Action |
+| **Monitor** | Create, List, Get Changes, Control |
+| **AI Visibility** | Search, List Sources |
+| **Browser** | Run Task, List Sessions, Delete Session |
+
+Workflows built with version 1.4.1 or earlier keep their original single Operation list (node version 1) and run unchanged. Nodes you add now use resources (node version 2).
 
 ### 1. Scrape URL
 
@@ -192,47 +202,44 @@ Trigger → Anakin (Agentic Search) → Process Structured Data
 
 ### More Operations
 
-Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the Anakin API as Operations. Full field-by-field defaults are in [Configuration Options by Operation](#configuration-options-by-operation) below; endpoints are listed in [API Endpoints Used](#api-endpoints-used).
+Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the Anakin API as the operations below, grouped by resource. Full field-by-field defaults are in [Configuration Options by Operation](#configuration-options-by-operation) below; endpoints are listed in [API Endpoints Used](#api-endpoints-used).
 
-#### Site Discovery
+#### Web: Site Discovery
 
 - **Map** — Discover all reachable URLs under a site (structure discovery before crawling). Async; polls to completion.
 - **Crawl** — Bulk-fetch markdown across many pages of a site, scoped with include/exclude patterns. Async; polls to completion.
 
 #### Wire (pre-built automation actions across hundreds of sites)
 
-- **Wire: Discover Actions** — Find candidate Wire actions from a natural-language intent (e.g. "top phones on walmart"). Synchronous.
-- **Wire: Browse Catalog** — List every supported site, or one site's full action list and parameter schemas. Synchronous.
-- **Wire: Run Read Action** — Run a Wire action that extracts data (read-only). Same endpoint and body shape as Run Write Action; split into a separate Operation purely for read/write safety labeling. Async; polls to completion.
-- **Wire: Run Write Action** — Run a Wire action that changes state on the target site (submit a form, add to cart, etc.). Async; polls to completion.
-- **Wire: List Identities** — List your saved Wire identities and credentials. Synchronous.
-- **Wire: Sign In** — Sign in to a credentials-mode Wire site and get a `credential_id` usable with the two action operations above. Synchronous.
-- **Wire: Request New Action** — Request a brand-new Wire action for a site not yet in the catalog. Fire-and-forget; returns a pending build status without polling.
+- **Discover Actions** — Find candidate Wire actions from a natural-language intent (e.g. "top phones on walmart"). Synchronous.
+- **Browse Catalog** — List every supported site, or one site's full action list and parameter schemas. Synchronous.
+- **Run Read Action** — Run a Wire action that extracts data (read-only). Same endpoint and body shape as Run Write Action; split into a separate Operation purely for read/write safety labeling. Async; polls to completion.
+- **Run Write Action** — Run a Wire action that changes state on the target site (submit a form, add to cart, etc.). Async; polls to completion.
+- **List Identities** — List your saved Wire identities and credentials. Synchronous.
+- **Sign In** — Sign in to a credentials-mode Wire site and get a `credential_id` usable with the two action operations above. Synchronous.
+- **Request New Action** — Request a brand-new Wire action for a site not yet in the catalog. Fire-and-forget; returns a pending build status without polling.
 
-#### Website Monitoring
+#### Monitor
 
-- **Create Monitor** — Create a scheduled monitor that checks a URL (or a whole site, or a Wire action) on an interval (minimum 15 minutes) and records changes, optionally alerting a webhook or email. The richest operation — supports page/site/wire scope, full-page or AI-extracted specific-data watching, and per-scope options (site crawl depth/patterns, Wire action/params). Synchronous — the monitor itself runs on Anakin's schedule.
-- **List Monitors** — List your monitors, or fetch one by ID. Synchronous.
-- **Get Monitor Changes** — Get the detected changes recorded for a monitor. Synchronous.
-- **Control Monitor** — Pause, resume, run now, or permanently delete a monitor. Synchronous.
+- **Create** — Create a scheduled monitor that checks a URL (or a whole site, or a Wire action) on an interval (minimum 15 minutes) and records changes, optionally alerting a webhook or email. The richest operation — supports page/site/wire scope, full-page or AI-extracted specific-data watching, and per-scope options (site crawl depth/patterns, Wire action/params). Synchronous — the monitor itself runs on Anakin's schedule.
+- **List** — List your monitors, or fetch one by ID. Synchronous.
+- **Get Changes** — Get the detected changes recorded for a monitor. Synchronous.
+- **Control** — Pause, resume, run now, or permanently delete a monitor. Synchronous.
 
 #### AI Visibility
 
-- **AI Visibility Search** — Ask multiple AI answer engines (ChatGPT, Gemini, Google AI Overview) the same question and compare their answers, with an AI-generated synthesis of where they agree/diverge. Async; polls to completion. A `failed` per-source result is still returned as data, not thrown as an error.
-- **AI Visibility Sources** — List the AI answer engines available to AI Visibility Search. Synchronous.
+- **Search** — Ask multiple AI answer engines (ChatGPT, Gemini, Google AI Overview) the same question and compare their answers, with an AI-generated synthesis of where they agree/diverge. Async; polls to completion. A `failed` per-source result is still returned as data, not thrown as an error.
+- **List Sources** — List the AI answer engines available to Search. Synchronous.
 
-#### Browser Sessions
+#### Browser
 
 - **List Sessions** — List your saved, authenticated browser sessions (created via the Anakin dashboard), optionally filtered by domain. Synchronous.
 - **Delete Session** — Permanently delete a saved browser session. Synchronous, irreversible.
-
-#### Browser Task
-
-- **Browser Task** — Run a natural-language task in a real AI-driven cloud browser (navigate, click, type, extract) for multi-step flows that Scrape/Crawl can't handle and no Wire action covers. For authenticated tasks, pass a Session ID from List Sessions — never put credentials in the prompt. Async; polls to completion (server hard-caps a run at ~5.5 minutes).
+- **Run Task** — Run a natural-language task in a real AI-driven cloud browser (navigate, click, type, extract) for multi-step flows that Scrape/Crawl can't handle and no Wire action covers. For authenticated tasks, pass a Session ID from List Sessions — never put credentials in the prompt. Async; polls to completion (server hard-caps a run at ~5.5 minutes).
 
 ### Configuration Options by Operation
 
-#### Scrape URL Options
+#### Web → Scrape URL
 | Option | Description | Default |
 |--------|-------------|---------|
 | **URL** | The website URL to scrape | *Required* |
@@ -241,13 +248,13 @@ Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the 
 | **Country Code** | Proxy country code (e.g., us, uk, de) | us |
 | **Force Fresh** | Bypass cache and force fresh scrape | false |
 
-#### Search Options
+#### Web → Search
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Search Query** | The question or query to search | *Required* |
 | **Max Results** | Maximum number of results to return | 5 |
 
-#### Agentic Search Options
+#### Web → Agentic Search
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Search Prompt** | The search prompt for analysis | *Required* |
@@ -256,7 +263,7 @@ Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the 
 | **Poll Interval** | Seconds between status checks | 5 |
 | **Data Schema (JSON)** | Optional JSON schema for structured data extraction | *None* |
 
-#### Map Options
+#### Web → Map
 | Option | Description | Default |
 |--------|-------------|---------|
 | **URL** | The starting URL for link discovery | *Required* |
@@ -270,7 +277,7 @@ Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the 
 | **Max Wait Time** | Maximum seconds to wait for completion | 300 |
 | **Poll Interval** | Seconds between status checks | 3 |
 
-#### Crawl Options
+#### Web → Crawl
 | Option | Description | Default |
 |--------|-------------|---------|
 | **URL** | The starting URL to crawl | *Required* |
@@ -285,35 +292,35 @@ Beyond Scrape URL, Search, and Agentic Search, the node exposes the rest of the 
 | **Max Wait Time** | Maximum seconds to wait for completion | 300 |
 | **Poll Interval** | Seconds between status checks | 3 |
 
-#### Wire: Discover Actions Options
+#### Wire → Discover Actions
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Query** | The intent in natural language | *Required* |
 | **Limit** | Maximum number of candidate actions to return | 5 |
 
-#### Wire: Browse Catalog Options
+#### Wire → Browse Catalog
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Catalog Slug** | Site slug to inspect (e.g. "walmart"); leave empty to list all catalogs | *None* |
 
-#### Wire: Run Read Action / Wire: Run Write Action Options
+#### Wire → Run Read Action / Run Write Action
 Both operations share the same fields — they hit the identical `POST /wire/task` endpoint and are split only for read/write safety labeling.
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| **Action ID** | The Wire action to run (from Wire: Discover Actions or Wire: Browse Catalog) | *Required* |
+| **Action ID** | The Wire action to run (from Discover Actions or Browse Catalog) | *Required* |
 | **Params (JSON)** | The action's input parameters; shape depends on the action | *None* |
 | **Credential ID** | Required when the action's auth_mode is "required" | *None* |
 | **Identity ID** | Optional identity selector (alternative to Credential ID) | *None* |
 | **Max Wait Time** | Maximum seconds to wait when the action runs asynchronously | 300 |
 | **Poll Interval** | Default seconds between status checks (the API's own pacing hint is honored when provided) | 3 |
 
-#### Wire: List Identities Options
+#### Wire → List Identities
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Catalog ID** | Optional — restrict to identities for a single catalog | *None* |
 
-#### Wire: Sign In Options
+#### Wire → Sign In
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Catalog Slug** | The catalog to sign in to (e.g. "neb") | *Required* |
@@ -322,7 +329,7 @@ Both operations share the same fields — they hit the identical `POST /wire/tas
 | **Source ID** | Optional 1Password identity-source ID (alternative to Login Params) | *None* |
 | **Source Ref (JSON)** | Optional 1Password item locator `{ vault_id, item_id, fields }` | *None* |
 
-#### Wire: Request New Action Options
+#### Wire → Request New Action
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Website URL** | The site to build an action for | *Required* |
@@ -331,7 +338,7 @@ Both operations share the same fields — they hit the identical `POST /wire/tas
 | **Visibility** | Action visibility: Private or Public | private |
 | **Force** | Build even if similar actions already exist for the domain | false |
 
-#### Create Monitor Options
+#### Monitor → Create
 | Option | Description | Default |
 |--------|-------------|---------|
 | **URL** | The URL to watch | *Required* |
@@ -359,23 +366,23 @@ Both operations share the same fields — they hit the identical `POST /wire/tas
 | **Wire Params (JSON)** | Wire scope: parameters passed to the action each check | *None* |
 | **Wire Watch Paths** | Wire scope: comma-separated JSON paths to diff | *None* |
 
-#### List Monitors Options
+#### Monitor → List
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Monitor ID** | Optional — fetch just this monitor instead of the full list | *None* |
 
-#### Get Monitor Changes Options
+#### Monitor → Get Changes
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Monitor ID** | The monitor ID | *Required* |
 
-#### Control Monitor Options
+#### Monitor → Control
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Monitor ID** | The monitor ID | *Required* |
 | **Action** | Pause, Resume, Run Now, or Delete | pause |
 
-#### AI Visibility Search Options
+#### AI Visibility → Search
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Query** | The question to ask every AI engine (max 2000 characters) | *Required* |
@@ -385,20 +392,20 @@ Both operations share the same fields — they hit the identical `POST /wire/tas
 | **Max Wait Time** | Maximum seconds to wait for completion | 180 |
 | **Poll Interval** | Seconds between status checks | 3 |
 
-#### AI Visibility Sources Options
+#### AI Visibility → List Sources
 No configurable fields.
 
-#### List Sessions Options
+#### Browser → List Sessions
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Domain** | Optional — filter to sessions for one website domain | *None* |
 
-#### Delete Session Options
+#### Browser → Delete Session
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Session ID** | The session ID to delete | *Required* |
 
-#### Browser Task Options
+#### Browser → Run Task
 | Option | Description | Default |
 |--------|-------------|---------|
 | **Prompt** | The task in natural language; never include passwords or secrets | *Required* |
@@ -413,13 +420,13 @@ No configurable fields.
 ## How It Works
 
 ### Async Operations (Submit → Poll → Return)
-Scrape URL, Agentic Search, Map, Crawl, Wire: Run Read/Write Action (when the action isn't synchronous), and AI Visibility Search follow the same pattern:
+Web → Scrape URL, Agentic Search, Map and Crawl; Wire → Run Read/Write Action (when the action isn't synchronous); AI Visibility → Search; and Browser → Run Task follow the same pattern:
 1. **Submit**: The node submits your request to the Anakin API
 2. **Poll**: Automatically checks the job status every few seconds (honoring the server's suggested pacing where provided)
 3. **Return**: Once complete, returns the data to your workflow
 
 ### Synchronous Operations
-Search, Wire: Discover Actions, Wire: Browse Catalog, Wire: List Identities, Wire: Sign In, Wire: Request New Action, Create Monitor, List Monitors, Get Monitor Changes, Control Monitor, AI Visibility Sources, List Sessions, and Delete Session return immediately — no polling required.
+Web → Search; Wire → Discover Actions, Browse Catalog, List Identities, Sign In and Request New Action; every Monitor operation; AI Visibility → List Sources; and Browser → List Sessions and Delete Session return immediately — no polling required.
 1. **Submit**: The node sends your request to the Anakin API
 2. **Return**: Immediately returns the response
 
@@ -540,6 +547,10 @@ For issues, questions, or contributions:
 MIT
 
 ## Changelog
+
+### 1.5.0
+- Operations are grouped by resource (Web, Wire, Monitor, AI Visibility, Browser), following n8n's resource pattern. New nodes use node version 2
+- Workflows built with earlier versions keep node version 1 and its single Operation list, and run unchanged
 
 ### 1.4.1
 - Fixed the node icon not appearing after install: 1.4.0 shipped a corrupted PNG. The node now uses SVG icons with separate light and dark mode variants

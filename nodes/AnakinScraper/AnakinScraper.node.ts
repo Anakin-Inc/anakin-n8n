@@ -67,8 +67,10 @@ export class AnakinScraper implements INodeType {
 		name: 'anakinScraper',
 		icon: { light: 'file:anakin.svg', dark: 'file:anakin.dark.svg' },
 		group: ['transform'],
-		version: 1,
-		subtitle: '={{$parameter["operation"]}}',
+		version: [1, 2],
+		defaultVersion: 2,
+		subtitle:
+			'={{$parameter["resource"] ? $parameter["operation"] + ": " + $parameter["resource"] : $parameter["operation"]}}',
 		description: 'Scrape websites, search with AI, and extract structured data',
 		defaults: {
 			name: 'Anakin',
@@ -83,11 +85,251 @@ export class AnakinScraper implements INodeType {
 			},
 		],
 		properties: [
+			// Version 2 groups the operations by resource. Version 1 listed them all
+			// in one Operation field, and workflows built with it keep that list.
+			// Operation values are the same in both versions and unique across
+			// resources, so the fields below and execute() key on the operation alone.
+			{
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						'@version': [2],
+					},
+				},
+				options: [
+					{
+						name: 'AI Visibility',
+						value: 'aiVisibility',
+					},
+					{
+						name: 'Browser',
+						value: 'browser',
+					},
+					{
+						name: 'Monitor',
+						value: 'monitor',
+					},
+					{
+						name: 'Web',
+						value: 'web',
+					},
+					{
+						name: 'Wire',
+						value: 'wire',
+					},
+				],
+				default: 'web',
+			},
 			{
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['aiVisibility'],
+					},
+				},
+				options: [
+					{
+						name: 'List Sources',
+						value: 'aiVisibilitySources',
+						description: 'List the AI answer engines available to Search',
+						action: 'List AI visibility engines',
+					},
+					{
+						name: 'Search',
+						value: 'aiVisibilitySearch',
+						description: 'Ask multiple AI answer engines the same question and compare their answers',
+						action: 'Compare AI engine answers',
+					},
+				],
+				default: 'aiVisibilitySearch',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['browser'],
+					},
+				},
+				options: [
+					{
+						name: 'Delete Session',
+						value: 'sessionDelete',
+						description: 'Permanently delete a saved browser session',
+						action: 'Delete a saved browser session',
+					},
+					{
+						name: 'List Sessions',
+						value: 'sessionList',
+						description: 'List your saved browser sessions',
+						action: 'List saved browser sessions',
+					},
+					{
+						name: 'Run Task',
+						value: 'browserTask',
+						description: 'Run a natural-language browser automation task with a real AI-driven browser',
+						action: 'Run an AI browser task',
+					},
+				],
+				default: 'browserTask',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['monitor'],
+					},
+				},
+				options: [
+					{
+						name: 'Control',
+						value: 'monitorControl',
+						description: 'Pause, resume, run now, or delete an existing monitor',
+						action: 'Control a website monitor',
+					},
+					{
+						name: 'Create',
+						value: 'monitorCreate',
+						description: 'Create a scheduled monitor that watches a URL, site, or Wire action for changes',
+						action: 'Create a website monitor',
+					},
+					{
+						name: 'Get Changes',
+						value: 'monitorChanges',
+						description: 'Get the detected changes recorded for a monitor',
+						action: 'Get monitor changes',
+					},
+					{
+						name: 'List',
+						value: 'monitorList',
+						description: 'List your website monitors, or fetch one monitor\'s configuration and status',
+						action: 'List website monitors',
+					},
+				],
+				default: 'monitorCreate',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['web'],
+					},
+				},
+				options: [
+					{
+						name: 'Agentic Search',
+						value: 'agenticSearch',
+						description: 'Advanced multi-stage AI search with automatic scraping and data extraction',
+						action: 'Perform agentic search',
+					},
+					{
+						name: 'Crawl',
+						value: 'crawl',
+						description: 'Bulk-fetch markdown content across many pages of a site',
+						action: 'Crawl a website',
+					},
+					{
+						name: 'Map',
+						value: 'map',
+						description: 'Discover all reachable URLs under a site (site structure discovery)',
+						action: 'Map website urls',
+					},
+					{
+						name: 'Scrape URL',
+						value: 'scrapeUrl',
+						description: 'Scrape a website and extract content',
+						action: 'Scrape a website URL',
+					},
+					{
+						name: 'Search',
+						value: 'search',
+						description: 'Perform an AI-powered search query',
+						action: 'Perform AI search',
+					},
+				],
+				default: 'scrapeUrl',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['wire'],
+					},
+				},
+				options: [
+					{
+						name: 'Browse Catalog',
+						value: 'wireCatalog',
+						description: 'List all Wire catalog sites, or one site\'s full action list and parameter schemas',
+						action: 'Browse the wire catalog',
+					},
+					{
+						name: 'Discover Actions',
+						value: 'wireDiscover',
+						description: 'Find pre-built Wire automation actions for a task from a natural-language intent',
+						action: 'Discover wire actions',
+					},
+					{
+						name: 'List Identities',
+						value: 'wireIdentities',
+						description: 'List your saved Wire identities and credentials',
+						action: 'List wire identities',
+					},
+					{
+						name: 'Request New Action',
+						value: 'wireBuild',
+						description: 'Request a brand-new Wire action for a website not yet in the catalog',
+						action: 'Request a new wire action',
+					},
+					{
+						name: 'Run Read Action',
+						value: 'wireReadAction',
+						description: 'Run a Wire action that extracts data (read-only, e.g. search listings, get a product\'s price)',
+						action: 'Run a wire read action',
+					},
+					{
+						name: 'Run Write Action',
+						value: 'wireWriteAction',
+						description: 'Run a Wire action that changes state on the target site (e.g. submit a form, add to cart)',
+						action: 'Run a wire write action',
+					},
+					{
+						name: 'Sign In',
+						value: 'wireLogin',
+						description: 'Sign in to a credentials-mode Wire site and get a credential ID',
+						action: 'Sign in to a wire site',
+					},
+				],
+				default: 'wireDiscover',
+			},
+			// Version 1: every operation in one list. Unchanged, for workflows built with it.
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						'@version': [1],
+					},
+				},
 				options: [
 					{
 						name: 'Agentic Search',
